@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   		http://www.springframework.org/schema/beans/spring-beans.xsd
+	   		http://www.springframework.org/schema/util
+	   		http://www.springframework.org/schema/util/spring-util.xsd">
+	   		<!-- if you'll use it outside, supply an id.Unless other specified, they are all
+	   		singletons -->
+	   		
+	   		<!-- Setter injection does not enforce to require dependencies.
+	   		it's possible to construct the bean even if no dependencies are supplied
+	   		e.g. two ProductDao beans that point to different databases
+	   		There is a risk if we do constructor injection because 
+	   		someone might inadvertently switch the order when editing the xml. 
+	   		With setter injection,specifying the properties in the wrong order has no effect.
+	   		Attaches by type
+	   		-->
+	   		
+	   		<bean id="mr-bean" class="com.example.HelloMessageEnglish">
+	   			<!-- looking for the set + camelcase the property name -->
+	   			<property name="message" value="Hello world!"/>
+	   		</bean>
+	   		
+	   		<!-- Constructor injection enforces the presence of necessary
+	   		dependencies since the bean can't be constructed unless all the 
+	   		parameters of the constructor can be satisfied. 
+	   		Attaches by name
+	   		-->
+	   		
+	   		<bean id="clousseau" class="com.example.HelloMessageFrench">
+	   			<!-- default datatpye is String or int -->
+	   			<constructor-arg value="Bonjour tout le monde!"/>
+	   		</bean>
+	   		
+	   		<bean id="chipmunks-orig" class="com.example.Chipmunk">
+				<property name="names">
+				<list>
+					<ref bean="alvin-name"/>
+					<value>Simon</value>
+					<value>Theodore</value>
+				</list>
+				</property>
+			</bean>
+			
+			<bean id="chipmunks" class="com.example.Chipmunk">
+				<property name="names" ref="names-of-chipmunks"/>
+			</bean>
+			
+			<bean id="alvin-name" class="java.lang.String">
+				<constructor-arg value="Alvin"/>
+			</bean>
+	   		
+			<util:list id="names-of-chipmunks" value-type="java.lang.String">
+				<ref bean="alvin-name"/>
+				<value>Simon</value>
+				<value>Theodore</value>
+			</util:list>
+			
+			<bean id="usStates" class="com.example.USStates">
+				<property name="stateNames">
+					<props>
+						<prop key="VA">Virginia</prop>
+						<prop key="CA">California</prop>
+						<prop key="AZ">Arizona</prop>
+					</props>
+				</property>
+			</bean>
+			
+			<util:list id="stoodges" value-type="java.lang.String">
+				<value>Larry</value>
+				<value>Moe</value>
+				<value>Curly</value>
+			</util:list>
+			
+			<bean id="movie-character" class="com.example.MovieCharacter">
+				<property name="character">
+					<map>
+						<entry>
+							<key>
+								<value>stoodges</value>
+							</key>
+							<ref bean="stoodges"/>
+						</entry>
+						<entry>
+							<key>
+								<value>chipmunks</value>
+							</key>
+							<ref bean="names-of-chipmunks"/>
+						</entry>
+					</map>
+				</property>
+			</bean>
+			
+			<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+				<property name="location">
+					<value>config.properties</value>
+				</property>
+			</bean>
+			
+			<bean id="chipmunk-from-config" class="com.example.Configuration">
+				<property name="chipmunkName">
+					<value>${chipmunk.name.alvin}</value>
+				</property>
+			</bean>
+			
+			<util:list id="list-chipmunk-from-config" value-type="java.lang.String">
+				<value>Larry</value>
+				<value>Moe</value>
+				<value>Curly</value>
+			</util:list>
+			
+</beans>
